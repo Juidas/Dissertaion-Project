@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: frontend-catchall
+  namespace: frontend              # keeps it close to the app, but any ns works
+spec:
+  gateways:
+  - istio-system/web-gw
+  hosts:
+  - "*"
+  http:
+  - match:
+    - uri: { prefix: "/" }         # this is the generic rule
+    rewrite: { uri: "/" }          # keep SPA root path
+    route:
+    - destination:
+        host: frontend-service.frontend.svc.cluster.local
+        port: { number: 80 }

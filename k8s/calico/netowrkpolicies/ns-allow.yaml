@@ -1,0 +1,14 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: 020-allow-system-namespaces
+spec:
+  order: 800
+  selector: "kubernetes.io/metadata.name in {'istio-system','storage-system','calico-system','kube-system','tigera-operator','chaos-mesh','calico-apiserver', 'metrics', 'default'}"
+  types: [Ingress, Egress]
+  ingress:
+  - action: Allow    # allow traffic **coming into** these namespaces
+    source: {}
+  egress:
+  - action: Allow    # allow traffic **leaving** these namespaces
+    destination: {}

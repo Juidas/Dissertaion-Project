@@ -1,0 +1,36 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: order-to-product
+  namespace: order-service
+spec:
+  selector: "app == 'order'"
+  types: [Egress]
+
+  egress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      namespaceSelector: "kubernetes.io/metadata.name == 'product-service'"
+      selector: "app == 'product'"
+      ports: [80,5000]
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: product-from-order
+  namespace: product-service
+spec:
+  selector: "app == 'product'"
+  types: [Ingress]
+
+  ingress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [80,5000]
+    source:
+      namespaceSelector: " kubernetes.io/metadata.name == 'order-service'"
+      selector: "app == 'order'"

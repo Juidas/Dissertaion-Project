@@ -1,5 +1,3 @@
-// Patched version: BASE_URLS removed
-
 document.addEventListener("DOMContentLoaded", () => {
   fetch("navbar.html")
     .then(response => response.text())

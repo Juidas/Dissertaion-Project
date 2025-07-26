@@ -21,7 +21,7 @@ metadata:
   name: allow-ingress-from-istio-gw
   namespace: frontend
 spec:
-  selector: "app == 'frontend'"          # target workload
+  selector: "app == 'frontend'"
   types: [Ingress]
   ingress:
   - action: Allow

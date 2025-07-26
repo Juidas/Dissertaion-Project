@@ -1,5 +1,3 @@
-// Patched version: BASE_URLS removed, fetch calls fixed
-
 let isLogin = true;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -45,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   
     if (endpoint === "register") {
-      headers["x-api-key"] = "registration-secret-key"; // ✅ Inject API key only for register
+      headers["x-api-key"] = "registration-secret-key"; 
     }
 
     const res = await fetch(`${BASE_URLS.auth}/${endpoint}`, {

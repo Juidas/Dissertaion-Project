@@ -98,8 +98,7 @@ spec:
           name: tcp-postgres
         volumeMounts:
         - name: data
-          mountPath: /var/lib/postgresql/data   # keep your custom path
-      # Istio sidecar will inject automatically
+          mountPath: /var/lib/postgresql/data
   volumeClaimTemplates:
   - metadata:
       name: data

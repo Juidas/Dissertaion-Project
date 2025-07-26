@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: backend-routes
-  namespace: istio-system          # any namespace is fine; istio-system keeps edge configs together
+  namespace: istio-system 
 spec:
   gateways:
   - istio-system/web-gw            # the Gateway you already have

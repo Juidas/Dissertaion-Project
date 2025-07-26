@@ -1,5 +1,3 @@
-// Patched version: BASE_URLS removed, fetch calls fixed
-
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
   

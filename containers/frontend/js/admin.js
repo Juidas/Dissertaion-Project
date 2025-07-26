@@ -1,5 +1,3 @@
-// Patched version: BASE_URLS removed and fetch calls corrected
-
 document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
     if (!token) return window.location.href = "index.html";

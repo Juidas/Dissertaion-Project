@@ -5,9 +5,9 @@ metadata:
   namespace: istio-system 
 spec:
   gateways:
-  - istio-system/web-gw            # the Gateway you already have
+  - istio-system/web-gw
   hosts:
-  - "*"                            # accept any Host header (no DNS yet)
+  - "*"  
   http:
   - match:
     - uri: { prefix: "/auth/" }

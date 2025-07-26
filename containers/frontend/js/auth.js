@@ -1,5 +1,3 @@
-// Patched version: BASE_URLS removed, fetch calls fixed
-
 document.getElementById("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const username = document.getElementById("login-username").value;
@@ -30,7 +28,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": "registration-secret-key"  // if required
+        "x-api-key": "registration-secret-key" 
       },
       body: JSON.stringify({ username, password })
     });

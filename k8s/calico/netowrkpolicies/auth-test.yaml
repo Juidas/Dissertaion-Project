@@ -23,7 +23,7 @@ metadata:
   name: allow-from-service
   namespace: auth-service
 spec:
-  selector: "app == 'auth-db'"           # protect only the API pod(s)
+  selector: "app == 'auth-db'"
   types: [Ingress]
 
   ingress:

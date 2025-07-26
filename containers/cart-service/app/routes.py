@@ -34,13 +34,11 @@ def add_to_cart():
 
     CART.setdefault(user, [])
 
-    # Check if product already exists
     for item in CART[user]:
         if item["product_id"] == product_id:
             item["quantity"] += quantity
             return {"message": "Quantity updated"}, 200
 
-    # If not found, append new item
     CART[user].append({"product_id": product_id, "quantity": quantity})
     return {"message": "Item added to cart"}, 201
 
@@ -84,8 +82,7 @@ def remove_from_cart():
 
     if user not in CART or not CART[user]:
         return {"message": "Cart is empty"}, 404
-
-    # Check if product exists in the user's cart
+        
     existing = [item for item in CART[user] if item["product_id"] == product_id]
     if not existing:
         return {"message": "Product not found in cart"}, 404

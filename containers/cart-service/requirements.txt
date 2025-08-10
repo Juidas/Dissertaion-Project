@@ -1,5 +1,0 @@
-Flask
-Flask-JWT-Extended
-python-dotenv
-requests
-Flask-Cors

@@ -1,0 +1,24 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: 050-allow-istio-control-plane
+spec:
+  order: 750
+  selector: "security.istio.io/tlsMode == 'istio'"
+  types: [Egress]
+  egress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      namespaceSelector: "kubernetes.io/metadata.name == 'istio-system'"
+      selector: "app == 'istiod'"
+      ports: [15012, 15014, 15010, 443]
+  - action: Allow   
+    protocol: UDP
+    destination:
+      ports: [53]
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [53]
+

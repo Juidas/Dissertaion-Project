@@ -1,0 +1,183 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auth-service
+  labels:
+    istio-injection: enabled
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: auth-secret
+  namespace: auth-service
+type: Opaque
+stringData:
+  DATABASE_URL: postgresql://auth_user:auth123@auth-db.auth-service.svc.cluster.local:5432/auth_db
+  JWT_SECRET_KEY: supersecretkey
+  API_KEY: 438b5f7a-7136-4faa-88f7-427f4c940529
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: auth-db-pvc
+  namespace: auth-service
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-db
+  namespace: auth-service
+spec:
+  clusterIP: None
+  selector:
+    app: auth-db
+  ports:
+  - name: tcp-postgres
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: auth-db
+  namespace: auth-service
+spec:
+  serviceName: auth-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-db
+  template:
+    metadata:
+      labels:
+        app: auth-db
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: ["auth-db"]
+              topologyKey: "kubernetes.io/hostname"
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 60
+      containers:
+      - name: postgres
+        image: postgres:14
+        env:
+        - name: POSTGRES_DB
+          value: auth_db
+        - name: POSTGRES_USER
+          value: auth_user
+        - name: POSTGRES_PASSWORD
+          value: auth123
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - containerPort: 5432
+          name: tcp-postgres
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data 
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: auth-service
+spec:
+  selector:
+    app: auth
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  namespace: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - auth
+                topologyKey: "kubernetes.io/hostname"
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 60
+      containers:
+      - name: auth
+        image: juidas/auth-service:v1.0.8
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: auth-secret
+              key: JWT_SECRET_KEY
+        - name: DATABSE_URL
+          valueFrom:
+            secretKeyRef:
+              name: auth-secret
+              key: DATABASE_URL
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: auth-secret
+              key: API_KEY
+

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  auth-db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth123
+      POSTGRES_DB: auth_db
+    ports:
+      - "5433:5433"  
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://auth_user:auth_pass@auth-db:5432/auth_db
+      - JWT_SECRET_KEY=supersecretkey
+      - API_KEY=438b5f7a-7136-4faa-88f7-427f4c940529
+    depends_on:
+      - auth-db
+    restart: always
+
+volumes:
+  auth-db-data:

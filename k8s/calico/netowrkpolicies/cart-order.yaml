@@ -1,0 +1,36 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: cart-to-order
+  namespace: cart-service
+spec:
+  selector: "app == 'cart'"
+  types: [Egress]
+
+  egress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      namespaceSelector: "kubernetes.io/metadata.name == 'order-service'"
+      selector: "app == 'order'"
+      ports: [80,5000]
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: order-from-cart
+  namespace: order-service
+spec:
+  selector: "app == 'order'"
+  types: [Ingress]
+
+  ingress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [80,5000]
+    source:
+      namespaceSelector: " kubernetes.io/metadata.name == 'cart-service'"
+      selector: "app == 'cart'"

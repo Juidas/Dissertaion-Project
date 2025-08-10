@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: product-order-mtls
+  namespace: order-service
+spec:
+  host: product-service.product-service.svc.cluster.local  
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

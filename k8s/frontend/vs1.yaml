@@ -1,0 +1,38 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend-routes
+  namespace: istio-system          
+spec:
+  gateways:
+  - istio-system/web-gw           
+  hosts:
+  - "*"                            
+  http:
+  - match:
+    - uri: { prefix: "/auth/" }
+    route:
+    - destination:
+        host: auth-service.auth-service.svc.cluster.local
+        port: { number: 80 }
+
+  - match:
+    - uri: { prefix: "/products/" }
+    route:
+    - destination:
+        host: product-service.product-service.svc.cluster.local
+        port: { number: 80 }
+
+  - match:
+    - uri: { prefix: "/cart/" }
+    route:
+    - destination:
+        host: cart-service.cart-service.svc.cluster.local
+        port: { number: 80 }
+
+  - match:
+    - uri: { prefix: "/orders/" }
+    route:
+    - destination:
+        host: order-service.order-service.svc.cluster.local
+        port: { number: 80 }

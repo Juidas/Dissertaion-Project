@@ -1,0 +1,84 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-istio-gw
+  namespace: auth-service
+spec:
+  selector: "app == 'auth'"
+  types: [Ingress]
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: "app == 'istio-ingressgateway'"
+      namespaceSelector: "kubernetes.io/metadata.name  == 'istio-system'"
+    destination:
+      ports: [5000]
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-istio-gw
+  namespace: order-service
+spec:
+  selector: "app == 'order'"
+  types: [Ingress]
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: "app == 'istio-ingressgateway'"
+      namespaceSelector: "kubernetes.io/metadata.name  == 'istio-system'"
+    destination:
+      ports: [80,5000]
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-istio-gw
+  namespace: cart-service
+spec:
+  selector: "app == 'cart'"
+  types: [Ingress]
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: "app == 'istio-ingressgateway'"
+      namespaceSelector: "kubernetes.io/metadata.name  == 'istio-system'"
+    destination:
+      ports: [80,5000]
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-istio-gw
+  namespace: product-service
+spec:
+  selector: "app == 'product'"
+  types: [Ingress]
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: "app == 'istio-ingressgateway'"
+      namespaceSelector: "kubernetes.io/metadata.name  == 'istio-system'"
+    destination:
+      ports: [80,5000]
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-istio-gw
+  namespace: frontend
+spec:
+  selector: "app == 'frontend'"
+  types: [Ingress]
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: "app == 'istio-ingressgateway'"
+      namespaceSelector: "kubernetes.io/metadata.name  == 'istio-system'"
+    destination:
+      ports: [80,5000]

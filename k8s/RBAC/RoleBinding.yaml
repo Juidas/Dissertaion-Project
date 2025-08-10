@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: auth-service
+  name: dev-user-binding
+subjects:
+  - kind: User
+    name: dev-user
+    namespace: auth-service
+roleRef:
+  kind: Role
+  name: dev-user-role
+  apiGroup: rbac.authorization.k8s.io
